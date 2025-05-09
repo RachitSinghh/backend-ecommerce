@@ -1,0 +1,41 @@
+# Core Features (Phase 1)
+- User & Admin Authentication
+
+
+- Product Management 
+  - CRUD for products
+  - Categories & tags
+
+- Cart System
+  - Add/Remove/Update items
+
+4. Order Checkout
+  - Place orders, track status
+
+5. Order History
+  - Per-user order listing
+
+6. Admin Dashboard APIS
+  - View all users/orders/products
+
+
+# Advance Features (Phase 2)
+
+- Payment Integration (Razorpay/Stripe - dummy OK)
+- Product Ratings & Reviews
+- WishList / Save for later
+- Coupon/ Discount system
+- Email confirmation on order
+
+## 🧩 Stack 
+Node.js + Express
+
+POSTGRES 
+
+JWT + bcrypt for auth
+
+express-validator for input
+
+Postman for testing
+
+`
