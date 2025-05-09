@@ -1,3 +1,6 @@
+// This file contains the authentication logic, including register/loging routes.
+
+
 const jwt = require("jsonwebtoken");
 
 exports.authMiddleware = (req, res, next) => {

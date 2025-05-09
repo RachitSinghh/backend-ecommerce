@@ -1,19 +1,12 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { register, login } = require('../controllers/authController');
-const { validationResult } = require('express-validator');
-const validate = require('../middlewares/validate.js')
+
+const validate = require('../middlewares/validate.js');
+const { protect,adminOnly } = require('../middlewares/authMiddleware.js');
 
 const router = express.Router();
 
-// const validate = (req, res, next) =>{
-//   const errors = validationResult(req); 
-
-//   if(!errors.isEmpty()){
-//     return res.status(400).json({errors: errors.array()});
-//   }
-//   next();
-// };
 
 
 router.post('/register', [
@@ -23,6 +16,21 @@ router.post('/register', [
   body('phone').optional().isMobilePhone().withMessage('Invalid phone number'),
   validate  
 ], register);
+
+// protected route: Example of a profile route that requires authentication
+
+router.get('/profile', protect, (req,res) =>{
+  res.json({
+    msg: 'This is the user profile', 
+    user: req.user, // the user is added to the request object after JWT validation
+  })
+})
+
+router.get('/admin', protect, adminOnly, (req,res) =>{
+  res.json({
+    msg: 'This is the admin-only page', 
+  })
+})
 
 router.post('/login', [
   body('email').isEmail().withMessage('Valid email is required'), 
