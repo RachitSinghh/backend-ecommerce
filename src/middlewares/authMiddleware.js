@@ -42,5 +42,5 @@ exports.adminOnly = (req, res, next) => {
     return next();
   }
 
-  res.status(403).json({ msg: "Access denided, admin only" });
+  res.status(403).json({ msg: "Access denied, admin only" });
 };
