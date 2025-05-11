@@ -17,9 +17,15 @@ router.post('/register', [
   validate  
 ], register);
 
+router.post('/login', [
+  body('email').isEmail().withMessage('Valid email is required'), 
+  body('password').exists().withMessage('Password is required'), 
+  validate
+], login);
 // protected route: Example of a profile route that requires authentication
 
 router.get('/profile', protect, (req,res) =>{
+
   res.json({
     msg: 'This is the user profile', 
     user: req.user, // the user is added to the request object after JWT validation
@@ -32,10 +38,5 @@ router.get('/admin', protect, adminOnly, (req,res) =>{
   })
 })
 
-router.post('/login', [
-  body('email').isEmail().withMessage('Valid email is required'), 
-  body('password').exists().withMessage('Password is required'), 
-  validate
-], login);
 
 module.exports = router;
