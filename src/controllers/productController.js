@@ -1,4 +1,5 @@
 const Product = require("../models/product.js");
+const { sequelize } = require("../models/product.js");
 
 // @desc Create a new product (admin only)
 // @route  POST /api/products
@@ -8,6 +9,13 @@ exports.createProduct = async (req, res) => {
   try {
     const { name, description, price, category, imageUrl, countInStock } =
       req.body;
+
+    const existingProduct = await Product.findOne({ where: { name } });
+    if (existingProduct) {
+      return res
+        .status(400)
+        .json({ message: "Product with this name already exists" });
+    }
 
     const product = await Product.create({
       name,
@@ -79,17 +87,43 @@ exports.updateProduct = async (req, res) => {
 // @route DELETE /api/products/:id
 // @access PRIVATE/Admin
 
-exports.deleteProduct = async (req,res) =>{
-  try{
-    const product = await Product.findByPk(req.params.id);
+exports.deleteProduct = async (req, res) => {
+ 
 
-    if(!product) return res.status(404).json({ message: 'Product not found'});
+  const { id } = req.params;
 
-    await product.destroy();
+  try {
+    const productsToDelete = await Product.findByPk(id);
+    if (!productsToDelete) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
 
-    res.json({message: 'Product deleted succesfully'});
-  }catch(err){
+    // delete the product
+    await productsToDelete.destroy();
+
+    //Re-fetch all products and reassign IDs;
+    const allProducts = await Product.findAll({ order: [["id", "ASC"]] });
+
+    for (let i = 0; i < allProducts.length; i++) {
+      await allProducts[i].update({ id: 1 + i });
+    }
+
+    return res.json({msg: "Product deleted and IDs reassigned"});
+  } catch (err) {
     console.error(err);
-    res.status(500).json({message: 'Failed to delete product'});
+    res.status(500).json({ msg: "Server error" });
   }
-}
+};
+
+ // try {
+  //   const product = await Product.findByPk(req.params.id);
+
+  //   if (!product) return res.status(404).json({ message: "Product not found" });
+
+  //   await product.destroy();
+
+  //   res.json({ message: "Product deleted succesfully" });
+  // } catch (err) {
+  //   console.error(err);
+  //   res.status(500).json({ message: "Failed to delete product" });
+  // }
